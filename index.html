@@ -166,6 +166,28 @@ h1{font-size:60px;font-weight:850;letter-spacing:-.03em;line-height:1.05;margin:
 .tk .n{font:850 64px/1 'Archivo',system-ui,sans-serif;color:#DCA972;font-variation-settings:'wdth' 115}
 .tk p{font-size:29px;color:#fff;line-height:1.3}
 
+/* v2 additions */
+.origin{display:flex;flex-direction:column;gap:6px;padding:14px 20px;border-radius:12px;background:#F7F4FB;border:1px solid #E6DDF2}
+.origin b{font:800 32px/1.1 'Archivo',system-ui,sans-serif;letter-spacing:-.02em;color:#4E0973}
+.gapbox{background:#4E0973;border-radius:12px;padding:12px 18px}
+.gapbox .k{color:#C4B0E8!important}.gapbox .v{color:#fff!important}
+.rule{padding:18px 26px;display:flex;flex-direction:column;gap:10px}
+.rtop{display:grid;grid-template-columns:150px 1fr;gap:22px;align-items:center}
+.rk{font:800 31px/1.15 'Archivo',system-ui,sans-serif;letter-spacing:-.02em;color:#fff;margin-bottom:8px}
+.rk span{color:#DCA972}
+.rule p{font-size:24px;line-height:1.3}
+.rm{font-size:24px!important;line-height:1.35!important;padding:12px 18px;border-radius:10px;background:rgba(0,0,0,.18)}
+.pstep .result{font-size:34px;margin-top:4px}
+#s9 .pstep,[data-id=proof] .pstep{padding:16px 24px}
+.pstep .t b{color:#DCA972}
+.stp{display:grid;grid-template-columns:52px 1fr;gap:16px;padding:16px 24px;align-items:start}
+.stp .n{font:800 36px/1 'Archivo',system-ui,sans-serif;color:#8E6420}.dark .stp .n{color:#DCA972}
+.stp p{font-size:25px;line-height:1.32}
+.verdict{font:700 24px/1 'JetBrains Mono',monospace;padding:9px 16px;border-radius:999px;white-space:nowrap}
+.verdict.bad{background:#FBE9E9;color:#B23A3A}.verdict.ok{background:#E3F6EC;color:#2f8a5c}
+.tk p{color:#241733!important}.dark .tk p{color:#fff!important}
+.tk .n{color:#8E6420!important}.dark .tk .n{color:#DCA972!important}
+.dstat{font:700 26px/1 'JetBrains Mono',monospace}
 /* ---------- chrome ---------- */
 #rail{position:absolute;left:0;right:0;bottom:0;height:64px;display:flex;align-items:center;justify-content:center;gap:18px;color:var(--railInk);font:500 14px 'JetBrains Mono',monospace;padding:0 16px}
 #rail button{background:var(--railBg);border:1px solid var(--railLine);color:var(--railInk);width:40px;height:40px;border-radius:50%;cursor:pointer;font-size:18px;display:grid;place-items:center}
@@ -263,42 +285,44 @@ body.idle{cursor:none}
 <!-- 4 · SINUSOIDAL -->
 <section class="slide light" data-id="sin">
   <div class="top r"><span class="eyebrow">03 · The 2017 fix</span><span class="right"><span>RoPE · Explained</span><span class="num"></span></span></div>
-  <h2 class="r">Give every position a wave fingerprint.<span class="l2">Fast plus slow waves make each one unique.</span></h2>
+  <h2 class="r">Sinusoidal Positional Embedding (PE).<span class="l2">Every position gets its own wave fingerprint.</span></h2>
   <div class="body" style="grid-template-columns:1.22fr 1fr">
     <div class="card col r">
       <div class="lab">Fingerprint table · 64 numbers × 128 positions</div>
       <canvas id="s4heat" width="930" height="410"></canvas>
       <div class="row" style="flex-wrap:nowrap"><button class="btn ghost" id="s4play">❚❚ Pause</button><div class="ctl" style="flex:1;grid-template-columns:150px 1fr 70px"><label for="s4pos">Position</label><input type="range" id="s4pos" min="0" max="127" step="1" value="0"><output id="s4pv">0</output></div></div>
     </div>
-    <div class="card col r">
+    <div class="card col r" style="gap:14px">
+      <div class="origin"><span class="lab" style="color:#8E6420">From the original Transformer</span><b>“Attention Is All You Need”</b><span class="p" style="font-size:24px">Vaswani et al., 2017 · also called sinusoidal PE</span></div>
       <div class="lab">Fingerprint of this position</div>
-      <canvas id="s4bars" width="660" height="150"></canvas>
+      <canvas id="s4bars" width="660" height="96"></canvas>
       <div class="lab">Three of its 64 waves</div>
-      <canvas id="s4waves" width="660" height="200"></canvas>
+      <canvas id="s4waves" width="660" height="138"></canvas>
       <div class="row"><span class="chip">PE(pos, 2i) = sin(pos / 10000^(2i/d))</span></div>
     </div>
   </div>
-  <div class="foot r"><b>Values stay between −1 and +1, every position is unique, and nothing needs training. Then it is <u>added</u> to the word.</b><span class="src">Vaswani et al., 2017</span></div>
+  <div class="foot r"><b>Values stay between −1 and +1, every position is unique, and nothing needs training. The PE is then <u>added</u> to the word vector.</b><span class="src">Vaswani et al., 2017</span></div>
 </section>
 
 <!-- 5 · ADDITION FLAW -->
 <section class="slide dark" data-id="flaw">
-  <div class="top r"><span class="eyebrow">04 · Where it breaks</span><span class="right"><span>RoPE · Explained</span><span class="num"></span></span></div>
-  <h2 class="r">Adding position bends the meaning.<span class="l2">Word and place get blended into one arrow.</span></h2>
+  <div class="top r"><span class="eyebrow">04 · Where sinusoidal PE breaks</span><span class="right"><span>RoPE · Explained</span><span class="num"></span></span></div>
+  <h2 class="r">Adding PE changes the word itself.<span class="l2">Same word, new arrow at every position.</span></h2>
   <div class="body" style="grid-template-columns:600px 1fr">
-    <div class="card col r">
-      <svg id="s5svg" viewBox="-240 -240 480 480" width="536" height="400"></svg>
+    <div class="card col r" style="gap:12px">
+      <div class="lab">Model input = word + PE</div>
+      <svg id="s5svg" viewBox="-240 -240 480 480" width="536" height="380"></svg>
       <div class="ctl" style="grid-template-columns:130px 1fr 60px"><label for="s5pos">Position</label><input type="range" id="s5pos" min="0" max="40" step="1" value="0"><output id="s5pv">0</output></div>
-      <div class="ros" style="grid-template-columns:1fr 1fr"><div class="ro"><span class="k">Direction drift</span><span class="v gold" id="s5d">0°</span></div><div class="ro"><span class="k">Length</span><span class="v" id="s5l">1.00</span></div></div>
+      <div class="row" style="gap:14px"><span class="chip"><i style="--c:#C4B0E8"></i>"bank"</span><span class="chip"><i style="--c:#DCA972"></i>PE</span><span class="chip"><i style="--c:#fff"></i>input</span></div>
     </div>
-    <div class="col" style="gap:16px">
-      <div class="card issue" data-step="1"><span class="n">1</span><div><h3>Meaning and position are mixed</h3><p>"bank" at position 3 and "bank" at position 30 become different arrows. The model must untangle them.</p></div></div>
-      <div class="card issue" data-step="2"><span class="n">2</span><div><h3>Distance is only implicit</h3><p>(word<sub>m</sub> + pos<sub>m</sub>) · (word<sub>n</sub> + pos<sub>n</sub>) splits into four mixed terms. The gap m − n is buried inside.</p></div></div>
-      <div class="card issue" data-step="3"><span class="n">3</span><div><h3>Injected once, at the bottom</h3><p>Position enters before layer 1 and can blur as it passes through dozens of layers.</p></div></div>
-      <div class="card issue" data-step="4"><span class="n">4</span><div><h3>Weak on longer text</h3><p>A model trained on 512 tokens meets fingerprints it has never seen at 2,000 tokens.</p></div></div>
+    <div class="col" style="gap:14px">
+      <div class="card issue" data-step="1"><span class="n">1</span><div><h3>One word, many disguises</h3><p>The model never sees "bank" alone, only "bank + position 3", "bank + position 30"… a different arrow each time.</p></div></div>
+      <div class="card issue" data-step="2"><span class="n">2</span><div><h3>Meaning and position are blended</h3><p>Like mixing two paints: there is no clean way to separate <b>what</b> the word is from <b>where</b> it is.</p></div></div>
+      <div class="card issue" data-step="3"><span class="n">3</span><div><h3>It says "where", not "how far apart"</h3><p>Each word carries only its own seat number. Whether two words are neighbours, the model must work out itself.</p></div></div>
+      <div class="card issue" data-step="4"><span class="n">4</span><div><h3>Added once, for lengths it practised</h3><p>PE goes in only at the first layer and blurs in deep stacks. Longer texts bring unfamiliar positions.</p></div></div>
     </div>
   </div>
-  <div class="foot r"><b>What we want: position that never distorts the word, and attention that sees only the gap.</b><span class="src">Press → for each issue</span></div>
+  <div class="foot r"><b>What we want: leave the word's meaning untouched, and let attention see directly how far apart two words are.</b><span class="src">Drag the slider · press → for each issue</span></div>
 </section>
 
 <!-- 6 · ROTATE IDEA -->
@@ -347,42 +371,53 @@ body.idle{cursor:none}
 <!-- 8 · KEY INSIGHT -->
 <section class="slide light" data-id="pair">
   <div class="top r"><span class="eyebrow">07 · The key insight</span><span class="right"><span>RoPE · Explained</span><span class="num"></span></span></div>
-  <h2 class="r">Rotate both words. Only the gap survives.<span class="l2">Slide the pair: the score stays put.</span></h2>
-  <div class="body" style="grid-template-columns:640px 1fr">
-    <div class="card col r">
-      <svg id="s8svg" viewBox="-260 -260 520 520" width="576" height="520"></svg>
+  <h2 class="r">Rotate both words. Only the gap survives.<span class="l2">Attention sees only n − m, how far apart.</span></h2>
+  <div class="body" style="grid-template-columns:580px 1fr">
+    <div class="card col r" style="gap:8px;align-items:center">
+      <svg id="s8svg" viewBox="-260 -260 520 520" width="400" height="370"></svg>
+      <div style="align-self:stretch"><div class="lab">Score over time</div><canvas id="s8spark" width="510" height="56"></canvas></div>
     </div>
-    <div class="col" style="gap:18px">
-      <div class="ros r"><div class="ro"><span class="k">Gap n − m</span><span class="v" id="s8g">3</span></div><div class="ro"><span class="k">Angle between</span><span class="v gold" id="s8a">20°</span></div><div class="ro"><span class="k">Score q′·k′</span><span class="v pur" id="s8s">0.94</span></div></div>
-      <div class="card col r" style="gap:8px;padding:20px 28px">
+    <div class="col" style="gap:12px">
+      <div class="ros r" style="grid-template-columns:1fr 1fr 1.25fr 1fr"><div class="ro"><span class="k">q at m</span><span class="v pur" id="s8m2">2</span></div><div class="ro"><span class="k">k at n</span><span class="v gold" id="s8n2">5</span></div><div class="ro gapbox"><span class="k">Gap n − m</span><span class="v" id="s8g">3</span></div><div class="ro"><span class="k">Score</span><span class="v" id="s8s">0.94</span></div></div>
+      <div class="card col r" style="gap:2px;padding:12px 28px">
         <div class="ctl"><label for="s8m" style="color:#4E0973">q at m</label><input type="range" id="s8m" min="0" max="20" step="1" value="2"><output id="s8mv">2</output></div>
         <div class="ctl"><label for="s8n" style="color:#8E6420">k at n</label><input type="range" id="s8n" min="0" max="20" step="1" value="5"><output id="s8nv">5</output></div>
         <div class="row" style="margin-top:8px"><button class="btn" id="s8up">Shift both +1</button><button class="btn ghost" id="s8dn">Shift both −1</button><button class="btn ghost" id="s8auto">▶ Auto-shift</button></div>
       </div>
-      <div class="card col r" style="gap:8px;padding:18px 28px"><div class="lab">Score over time</div><canvas id="s8spark" width="900" height="96"></canvas></div>
-      <div class="callout" data-step="1"><span class="ic">✓</span><span>Absolute positions m and n cancel out. The score depends only on the words and on <b>n − m</b>.</span></div>
+      <div class="card col r" style="gap:6px;padding:14px 28px"><div class="lab">Where the angle between them comes from</div><div class="math" id="s8eq" style="font-size:25px;line-height:1.35"></div></div>
+      <div class="callout" data-step="1" style="padding:14px 24px;font-size:26px"><span class="ic">✓</span><span><b>n − m is the relative position</b>: how far apart the words are. m and n alone never matter.</span></div>
     </div>
   </div>
-  <div class="foot r"><b>Shift both: flat line. Change the gap: the score moves. That is relative position, for free.</b><span class="src">θ = 25° per position</span></div>
+  <div class="foot r"><b>Shift both: same gap, same score, a flat line. Change the gap: the score moves.</b><span class="src">θ = 25° per position · dashed = before turning</span></div>
 </section>
 
 <!-- 9 · PROOF -->
 <section class="slide dark" data-id="proof">
   <div class="top r"><span class="eyebrow">08 · Why it works</span><span class="right"><span>RoPE · Explained</span><span class="num"></span></span></div>
-  <h2 class="r">The proof fits on a napkin.<span class="l2">Two rules about turning do all the work.</span></h2>
-  <div class="body" style="grid-template-columns:560px 1fr">
-    <div class="card col r" style="align-items:center">
-      <svg id="s9svg" viewBox="-250 -250 500 500" width="500" height="470"></svg>
-      <div class="lab" id="s9c" style="text-align:center">m = 0 · n = 2</div>
+  <h2 class="r">Two rules about turning do all the work.<span class="l2">Learn them, and the proof takes four lines.</span></h2>
+  <div class="body" style="grid-template-columns:1.06fr 1fr;gap:30px">
+    <div class="col" style="gap:18px">
+      <div class="card rule r">
+        <div class="rtop"><svg id="s9a" viewBox="-110 -110 220 220" width="150" height="150"></svg>
+          <div><div class="rk"><span>Rule A</span> · Transpose = turn backwards</div><p>Flip the rotation grid across its diagonal and the two sin terms swap sign. That is a turn by the same angle in reverse, so it undoes the original turn.</p></div></div>
+        <div class="math rm">R(a) = ⎡cos  −sin⎤    R(a)ᵀ = ⎡ cos   sin⎤ = R(−a)
+       ⎣sin   cos⎦            ⎣−sin   cos⎦</div>
+      </div>
+      <div class="card rule r">
+        <div class="rtop"><svg id="s9b" viewBox="-110 -110 220 220" width="150" height="150"></svg>
+          <div><div class="rk"><span>Rule B</span> · Turns add up</div><p>Turn by a, then turn by b, and you end up turned by a + b. Like turning a dial 30° and then another 45°: 75° in total.</p></div></div>
+        <div class="math rm">R(a) · R(b) = R(a + b)      e.g.  30° then 45° = 75°
+so  R(−mθ) · R(nθ) = R((n − m)θ)</div>
+      </div>
     </div>
-    <div class="col" style="gap:14px">
-      <div class="card pstep" data-step="1"><span class="n">1</span><div><div class="t">Turn the query by its position, the key by its position.</div><div class="math"><span class="q">q′ = R(mθ)·q</span>      <span class="k2">k′ = R(nθ)·k</span></div></div></div>
-      <div class="card pstep" data-step="2"><span class="n">2</span><div><div class="t">Attention score is their dot product.</div><div class="math">q′·k′ = qᵀ · R(mθ)ᵀ · R(nθ) · k</div></div></div>
-      <div class="card pstep" data-step="3"><span class="n">3</span><div><div class="t">Rule A: turning back undoes a turn. Rule B: turns add up.</div><div class="math">R(mθ)ᵀ = R(−mθ)  ⇒  R(−mθ)·R(nθ) = R((n−m)θ)</div></div></div>
-      <div class="card pstep" data-step="4"><span class="n">4</span><div><div class="t">So m and n never appear alone, only their difference.</div><div class="result" data-morph="result">score = qᵀ · R((n−m)θ) · k</div></div></div>
+    <div class="col" style="gap:12px">
+      <div class="card pstep" data-step="1"><span class="n">1</span><div><div class="t">Turn each word by its own position.</div><div class="math"><span class="q">q′ = R(mθ)·q</span>    <span class="k2">k′ = R(nθ)·k</span></div></div></div>
+      <div class="card pstep" data-step="2"><span class="n">2</span><div><div class="t">Score = dot product. Writing q′ as a row adds a transpose.</div><div class="math">q′·k′ = qᵀ · R(mθ)ᵀ · R(nθ) · k</div></div></div>
+      <div class="card pstep" data-step="3"><span class="n">3</span><div><div class="t"><b>Rule A</b>: the transpose becomes a backward turn.</div><div class="math">      = qᵀ · R(−mθ) · R(nθ) · k</div></div></div>
+      <div class="card pstep" data-step="4"><span class="n">4</span><div><div class="t"><b>Rule B</b>: the turns add up, −mθ + nθ = (n − m)θ.</div><div class="result" data-morph="result">score = qᵀ · R((n−m)θ) · k</div></div></div>
     </div>
   </div>
-  <div class="foot r"><b>Rotate by absolute position, and attention automatically sees relative distance.</b><span class="src">The pair spins together; the angle between never changes</span></div>
+  <div class="foot r"><b>m and n never appear on their own, only their gap n − m. That is why RoPE sees relative position.</b><span class="src">Press → to build the proof</span></div>
 </section>
 
 <!-- 10 · MANY DIALS -->
@@ -465,25 +500,34 @@ body.idle{cursor:none}
 <!-- 14 · HEAD TO HEAD -->
 <section class="slide light" data-id="h2h">
   <div class="top r"><span class="eyebrow">13 · Head to head</span><span class="right"><span>RoPE · Explained</span><span class="num"></span></span></div>
-  <h2 class="r">Slide the same phrase further along.<span class="l2">The old method wobbles. RoPE holds steady.</span></h2>
-  <div class="body" style="grid-template-rows:auto 1fr;gap:22px">
-    <div class="card r" style="padding:14px 24px"><svg id="s14rul" viewBox="0 0 1680 104" width="1680" height="104"></svg></div>
-    <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:30px;min-height:0">
-      <div class="card col r">
-        <div class="row" style="justify-content:space-between"><div class="lab">Score of "cat" with "sat" (2 apart)</div><div class="legend"><span class="chip"><i style="--c:#CC4B4B"></i>added (2017)</span><span class="chip"><i style="--c:#4E0973"></i>RoPE</span></div></div>
-        <canvas id="s14c" width="960" height="250"></canvas>
-        <div class="ctl" style="grid-template-columns:150px 1fr 80px"><label for="s14s">Shift</label><input type="range" id="s14s" min="0" max="60" step="0.25" value="0"><output id="s14sv">0</output></div>
+  <h2 class="r">Same two words. Move them anywhere.<span class="l2">PE's score changes. RoPE's score does not.</span></h2>
+  <div class="body" style="grid-template-rows:auto 1fr;gap:20px">
+    <div class="card r" style="padding:14px 24px;display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center">
+      <svg id="s14rul" viewBox="0 0 1220 104" width="1220" height="104"></svg>
+      <div class="col" style="gap:8px"><button class="btn" id="s14play">▶ Slide the phrase</button><div class="ctl" style="grid-template-columns:90px 230px 60px"><label for="s14s">Shift</label><input type="range" id="s14s" min="0" max="60" step="0.25" value="0"><output id="s14sv">0</output></div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr .95fr;gap:24px;min-height:0">
+      <div class="card col r" style="gap:12px">
+        <div class="row" style="justify-content:space-between"><div class="lab">Sinusoidal PE</div><span class="verdict bad">changes ✗</span></div>
+        <div class="ro"><span class="k">Score of "cat" with "sat"</span><span class="v bad" id="s14a">0.00</span></div>
+        <canvas id="s14ca" width="490" height="190"></canvas>
+        <p style="font-size:24px">Across positions: <b id="s14ra"></b></p>
       </div>
-      <div class="col" style="gap:16px">
-        <div class="card r"><div class="ros" style="grid-template-columns:1fr 1fr"><div class="ro"><span class="k">Added</span><span class="v bad" id="s14a">0.00</span></div><div class="ro"><span class="k">RoPE</span><span class="v pur" id="s14r">0.00</span></div></div></div>
-        <div class="card col" data-step="1" style="gap:10px">
-          <div class="lab">Why the old score wobbles</div>
-          <div class="math" id="s14t" style="font-size:25px;line-height:1.55"></div>
-        </div>
+      <div class="card col r" style="gap:12px">
+        <div class="row" style="justify-content:space-between"><div class="lab">RoPE</div><span class="verdict ok">constant ✓</span></div>
+        <div class="ro"><span class="k">Score of "cat" with "sat"</span><span class="v pur" id="s14r">0.00</span></div>
+        <canvas id="s14cr" width="490" height="190"></canvas>
+        <p style="font-size:24px">Across positions: <b id="s14rr"></b></p>
+      </div>
+      <div class="card col" data-step="1" style="gap:10px">
+        <div class="lab">Why PE wobbles</div>
+        <p style="font-size:24px">Two of PE's four score pieces mix a <b>word</b> with a <b>position</b>, so they move when the phrase moves.</p>
+        <div class="math" id="s14t" style="font-size:24px;line-height:1.45"></div>
+        <p style="font-size:24px">RoPE only uses the turn <b>between</b> the words: the same everywhere.</p>
       </div>
     </div>
   </div>
-  <div class="foot r"><b>Two of the four added terms depend on absolute position. RoPE has no such terms.</b><span class="src">Toy 2D vectors, same gap of 2</span></div>
+  <div class="foot r"><b>The words and their 2-step gap never change, so the score shouldn't either. Only RoPE delivers that.</b><span class="src">Toy 2D vectors · gap fixed at 2</span></div>
 </section>
 
 <!-- 15 · CODE -->
@@ -505,31 +549,51 @@ body.idle{cursor:none}
 <!-- 16 · LIMITS -->
 <section class="slide light" data-id="limit">
   <div class="top r"><span class="eyebrow">15 · The limit</span><span class="right"><span>RoPE · Explained</span><span class="num"></span></span></div>
-  <h2 class="r">Past training length, slow dials get lost.<span class="l2">Interpolation pulls them back home.</span></h2>
+  <h2 class="r">Long text confuses the slow dials.<span class="l2">They point to angles never seen in training.</span></h2>
   <div class="body" style="grid-template-columns:1fr 1fr">
     <div class="card r" style="display:grid;grid-template-columns:1fr 220px;gap:20px;align-items:center">
       <div class="col" style="align-items:center;gap:6px"><svg id="s16big" viewBox="-260 -260 520 520" width="470" height="470"></svg><div class="lab">Slow dial</div></div>
-      <div class="col" style="align-items:center;gap:10px"><svg id="s16small" viewBox="-120 -120 240 240" width="210" height="210"></svg><div class="lab" style="text-align:center">Fast dial</div><p style="font-size:24px;text-align:center">Spun hundreds of times in training. Every angle is familiar.</p></div>
+      <div class="col" style="align-items:center;gap:10px"><svg id="s16small" viewBox="-120 -120 240 240" width="210" height="210"></svg><div class="lab" style="text-align:center">Fast dial</div><p style="font-size:24px;text-align:center">Every angle already seen in training.</p></div>
     </div>
-    <div class="col" style="gap:18px">
-      <div class="card col r">
-        <div class="ros"><div class="ro"><span class="k">Position</span><span class="v" id="s16p">0</span></div><div class="ro"><span class="k">Angle</span><span class="v gold" id="s16a">0°</span></div><div class="ro"><span class="k">Status</span><span class="v ok" id="s16st">seen</span></div></div>
+    <div class="col" style="gap:14px">
+      <div class="card col r" style="gap:12px">
+        <div class="ros"><div class="ro"><span class="k">Position</span><span class="v" id="s16p">0</span></div><div class="ro"><span class="k">Slow angle</span><span class="v gold" id="s16a">0°</span></div><div class="ro"><span class="k">Status</span><span class="v ok" id="s16st">seen ✓</span></div></div>
         <div class="ctl" style="grid-template-columns:150px 1fr"><label for="s16x">Position</label><input type="range" id="s16x" min="0" max="16384" step="16" value="0"></div>
-        <div class="row"><button class="btn" id="s16pi">Interpolation: off</button><button class="btn ghost" id="s16play">▶ Sweep</button><span class="p" style="font-size:24px">Trained on 4,096 tokens · target 16,384</span></div>
+        <div class="row"><button class="btn" id="s16play">▶ Sweep</button><span class="p" style="font-size:24px">Trained on texts up to 4,096 tokens</span></div>
       </div>
-      <div class="card col" data-step="1" style="gap:12px">
-        <div class="lab">Ways to extend context</div>
-        <p><b>Position interpolation</b> divides positions by 4, so 16k tokens reuse the angles of 4k.</p>
-        <p><b>NTK-aware scaling</b> and <b>YaRN</b> stretch slow dials more than fast ones, keeping neighbour detail sharp.</p>
+      <div class="card stp" data-step="1"><span class="n">1</span><p><b>In training</b> (up to 4,096 tokens) the slow dial only turned 0° → 80°. That slice is all it knows.</p></div>
+      <div class="card stp" data-step="2"><span class="n">2</span><p><b>On longer text</b>, at token 10,000 it points near 195°: never seen, so scores become unreliable.</p></div>
+      <div class="card stp" data-step="3"><span class="n">3</span><p><b>Fast dials are fine</b>: they spun round hundreds of times, so every angle is familiar.</p></div>
+    </div>
+  </div>
+  <div class="foot r"><b>The formula still works at any length. The problem is angles the model never practised on.</b><span class="src">Drag past 4,096 tokens</span></div>
+</section>
+
+<!-- 17 · INTERPOLATION -->
+<section class="slide dark" data-id="interp">
+  <div class="top r"><span class="eyebrow">16 · The fix · Position interpolation</span><span class="right"><span>RoPE · Explained</span><span class="num"></span></span></div>
+  <h2 class="r">Squeeze long text into the familiar range.<span class="l2">Shrink every position so no dial overshoots.</span></h2>
+  <div class="body" style="grid-template-rows:auto 1fr;gap:20px">
+    <div class="card r" style="padding:14px 24px"><svg id="ipRul" viewBox="0 0 1676 150" width="1676" height="150"></svg></div>
+    <div style="display:grid;grid-template-columns:1.02fr 1fr;gap:26px;min-height:0">
+      <div class="card r" style="display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr auto;gap:10px 18px;align-items:center;padding:20px 28px">
+        <div class="col" style="align-items:center;gap:8px"><svg id="ipA" viewBox="-260 -260 520 520" width="190" height="190"></svg><div class="lab">Without</div><span class="dstat" id="ipSa">seen ✓</span></div>
+        <div class="col" style="align-items:center;gap:8px"><svg id="ipB" viewBox="-260 -260 520 520" width="190" height="190"></svg><div class="lab">With interpolation</div><span class="dstat" id="ipSb">seen ✓</span></div>
+        <div class="row" style="grid-column:1/-1;flex-wrap:nowrap"><button class="btn ghost" id="ipPlay">❚❚ Pause</button><div class="ctl" style="flex:1;grid-template-columns:120px 1fr 110px"><label for="ipX">Token</label><input type="range" id="ipX" min="0" max="16384" step="16" value="0"><output id="ipXv">0</output></div></div>
+      </div>
+      <div class="col" style="gap:14px">
+        <div class="card stp" data-step="1"><span class="n">1</span><p><b>The recipe:</b> position × 4,096 ⁄ 16,384 = × ¼. Token 16,000 is treated as position 4,000.</p></div>
+        <div class="card stp" data-step="2"><span class="n">2</span><p><b>The cost:</b> neighbours are now ¼ step apart, so detail blurs a little. A short fine-tune fixes it.</p></div>
+        <div class="card stp" data-step="3"><span class="n">3</span><p><b>Smarter versions</b> (NTK-aware, YaRN) squeeze slow dials a lot and fast dials barely, keeping detail sharp.</p></div>
       </div>
     </div>
   </div>
-  <div class="foot r"><b>Drag past 4,096: the slow dial leaves the shaded zone. Turn interpolation on and it never does.</b><span class="src">Chen et al., 2023 · Peng et al., 2023</span></div>
+  <div class="foot r"><b>The dials reuse angles the model already knows, just spread across a longer text.</b><span class="src">Chen et al., 2023 · Peng et al., 2023</span></div>
 </section>
 
 <!-- 17 · TAKEAWAY -->
-<section class="slide dark" data-id="end">
-  <div class="top r"><span class="eyebrow">16 · Take it with you</span><span class="right"><span>RoPE · Explained</span><span class="num"></span></span></div>
+<section class="slide light" data-id="end">
+  <div class="top r"><span class="eyebrow">17 · Take it with you</span><span class="right"><span>RoPE · Explained</span><span class="num"></span></span></div>
   <h2 class="r">Explain RoPE in 30 seconds.<span class="l2">Four sentences carry the whole idea.</span></h2>
   <div class="body" style="grid-template-columns:1.35fr 1fr">
     <div style="display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:24px;min-height:0">
@@ -637,15 +701,18 @@ const H={},renders=[];
 })();
 
 /* ===== 5 · addition flaw ===== */
-(()=>{const svg=$('#s5svg');plane(svg,210,true);const wa=30*DEG,wl=150,pl=82,om=.55;
-  const [ex,ey]=pt(225,wa);S('line',{x1:0,y1:0,x2:ex,y2:ey,stroke:'rgba(196,176,232,.5)','stroke-width':2,'stroke-dasharray':'8 8'},svg);
+(()=>{const svg=$('#s5svg');plane(svg,210,true);const wa=30*DEG,wl=150,pl=82,om=.55,[wx,wy]=pt(wl,wa);
+  const[ex,ey]=pt(225,wa);S('line',{x1:0,y1:0,x2:ex,y2:ey,stroke:'rgba(196,176,232,.45)','stroke-width':2,'stroke-dasharray':'8 8'},svg);
+  S('circle',{cx:wx,cy:wy,r:pl,fill:'none',stroke:'rgba(220,169,114,.35)','stroke-width':2,'stroke-dasharray':'4 8'},svg);
+  const dots=[];for(let p=0;p<=40;p++)dots.push(S('circle',{cx:wx+pl*Math.sin(p*om),cy:wy-pl*Math.cos(p*om),r:5,fill:'#fff',opacity:.15},svg));
   const word=Arrow(svg,{color:C.lil,w:9}),pe=Arrow(svg,{color:C.goldD,w:7,head:22}),sum=Arrow(svg,{color:'#fff',w:10,head:30});
-  const lw=T(svg,0,0,'"bank"',{class:'svm',fill:C.lil,'font-size':26}),ls=T(svg,0,0,'what attention sees',{class:'svm',fill:'#fff','font-size':24,'text-anchor':'middle'});
-  let p=0,pd=0,hold=0,tt=0;
-  const sl=rng('s5pos',v=>{p=v;hold=6});
-  function draw(){const[wx,wy]=pt(wl,wa);word.set(0,0,wx,wy);const px=pl*Math.sin(pd*om),py=-pl*Math.cos(pd*om);pe.set(wx,wy,wx+px,wy+py);sum.set(0,0,wx+px,wy+py);
-    attr(lw,{x:wx*.45-70,y:wy*.45-22});attr(ls,{x:wx+px-14,y:(wy+py)+(wy+py<0?-26:44),'text-anchor':'end'});
-    const sa=Math.atan2(-(wy+py),wx+px);let dd=(sa-wa)/DEG;$('#s5d').textContent=(dd>=0?'+':'−')+Math.abs(dd).toFixed(0)+'°';$('#s5l').textContent=(Math.hypot(wx+px,wy+py)/wl).toFixed(2);$('#s5pv').textContent=Math.round(pd)}
+  const lw=T(svg,0,0,'"bank"',{class:'svm',fill:C.lil,'font-size':26,'text-anchor':'end'});
+  const r1=T(svg,-228,-208,'',{class:'svm',fill:C.goldD,'font-size':24}),r2=T(svg,-228,-176,'',{class:'svm',fill:'rgba(238,232,246,.85)','font-size':24});
+  T(svg,-228,228,'dots = "bank" at each position',{class:'svm',fill:'rgba(238,232,246,.7)','font-size':24});
+  let p=0,pd=0,hold=0,tt=0;const sl=rng('s5pos',v=>{p=v;hold=6});
+  function draw(){word.set(0,0,wx,wy);const sx=wx+pl*Math.sin(pd*om),sy=wy-pl*Math.cos(pd*om);pe.set(wx,wy,sx,sy);sum.set(0,0,sx,sy);
+    attr(lw,{x:wx*.5-14,y:wy*.5-16});dots.forEach((d,i)=>d.setAttribute('opacity',i<=Math.round(pd)?.6:.15));
+    const dd=(Math.atan2(-sy,sx)-wa)/DEG;r1.textContent=`direction changed: ${dd>=0?'+':'−'}${Math.abs(dd).toFixed(0)}°`;r2.textContent=`length: ${(Math.hypot(sx,sy)/wl).toFixed(2)}×`;$('#s5pv').textContent=Math.round(pd)}
   draw();
   H.flaw={tick(t,dt){if(hold>0)hold-=dt;else if(!RM){tt+=dt;p=Math.round((tt*.9)%41);sl.set(p)}pd+=(p-pd)*Math.min(1,dt*7);draw()}};
 })();
@@ -685,21 +752,26 @@ const H={},renders=[];
 })();
 
 /* ===== 8 · key insight ===== */
+const sg=v=>(v<0?'−':'')+Math.abs(Math.round(v)),norm=v=>((v+180)%360+360)%360-180;
 (()=>{const svg=$('#s8svg');plane(svg,230,false);const qb=15*DEG,kb=-40*DEG,th=25*DEG,len=215;
+  [[qb,C.p],[kb,C.gold]].forEach(([a,c])=>{const[x,y]=pt(len*.8,a);S('line',{x1:0,y1:0,x2:x,y2:y,stroke:c,'stroke-width':3,'stroke-dasharray':'6 8',opacity:.4},svg)});
   const arc=S('path',{fill:'rgba(220,169,114,.18)',stroke:C.goldD,'stroke-width':4},svg),al=T(svg,0,0,'',{class:'svm',fill:C.gold,'font-size':26,'font-weight':700,'text-anchor':'middle'});
   const qa=Arrow(svg,{color:C.p,w:10,head:30}),ka=Arrow(svg,{color:C.gold,w:10,head:30});
   const ql=T(svg,0,0,'q',{fill:C.p,'font-size':34,'font-weight':800,'text-anchor':'middle',style:`font-family:${ARCH}`}),kl=T(svg,0,0,'k',{fill:C.gold,'font-size':34,'font-weight':800,'text-anchor':'middle',style:`font-family:${ARCH}`});
   S('circle',{r:9,fill:C.ink},svg);
-  let m=2,n=5,md=2,nd=5,auto=false,acc=0;const hist=[],sp=cv('s8spark');
+  let m=2,n=5,md=2,nd=5,auto=false,acc=0,lastEq='';const hist=[],sp=cv('s8spark');
   const sm=rng('s8m',v=>{m=v}),sn=rng('s8n',v=>{n=v});
   function shift(k){if(m+k<0||n+k<0||m+k>20||n+k>20)return false;m+=k;n+=k;sm.set(m);sn.set(n);return true}
   $('#s8up').addEventListener('click',()=>shift(1));$('#s8dn').addEventListener('click',()=>shift(-1));
   const ab=$('#s8auto');ab.addEventListener('click',()=>{auto=!auto;ab.textContent=auto?'❚❚ Stop':'▶ Auto-shift';ab.classList.toggle('on',auto)});
   function draw(){const a1=qb+md*th,a2=kb+nd*th;const[qx,qy]=pt(len,a1),[kx,ky]=pt(len,a2);qa.set(0,0,qx,qy);ka.set(0,0,kx,ky);
     const[q2,q3]=pt(len+32,a1),[k2,k3]=pt(len+32,a2);attr(ql,{x:q2,y:q3+12});attr(kl,{x:k2,y:k3+12});
-    let diff=a2-a1;let nd2=Math.atan2(Math.sin(diff),Math.cos(diff));arc.setAttribute('d',Math.abs(nd2)>.01?arcD(80,a1,a1+nd2).replace('M','M0 0 L')+' Z':'');
+    const diff=a2-a1,nd2=Math.atan2(Math.sin(diff),Math.cos(diff));arc.setAttribute('d',Math.abs(nd2)>.01?arcD(80,a1,a1+nd2).replace('M','M0 0 L')+' Z':'');
     const[tx,ty]=pt(118,a1+nd2/2);attr(al,{x:tx,y:ty+9});al.textContent=Math.abs(nd2/DEG)>4?Math.round(Math.abs(nd2/DEG))+'°':'';
-    const sc=Math.cos(diff);$('#s8g').textContent=Math.round(nd-md);$('#s8a').textContent=Math.round(Math.abs(nd2/DEG))+'°';$('#s8s').textContent=fx(sc);$('#s8mv').textContent=m;$('#s8nv').textContent=n;
+    const sc=Math.cos(diff);$('#s8s').textContent=fx(sc);$('#s8mv').textContent=m;$('#s8nv').textContent=n;$('#s8m2').textContent=m;$('#s8n2').textContent=n;
+    const g=n-m,pa=g*25,tot=norm(-55+pa);$('#s8g').textContent=sg(g);
+    const eq=`turn of <span class="k2">k</span> − turn of <span class="q">q</span> = ${n}×25° − ${m}×25°\n${' '.repeat(22)}= <b>(n − m)</b>×25° = ${sg(g)}×25° = ${sg(pa)}°\nangle between = −55° <span class="dim">(meaning)</span> ${pa>=0?'+':'−'} ${Math.abs(pa)}° = ${sg(tot)}°`;
+    if(eq!==lastEq){$('#s8eq').innerHTML=eq;lastEq=eq}
     hist.push(sc);if(hist.length>300)hist.shift();
     const x=sp.x;x.clearRect(0,0,sp.w,sp.h);x.strokeStyle='#E6DDF2';x.lineWidth=1.5;[0,.5,1].forEach(f=>{x.beginPath();x.moveTo(0,4+f*(sp.h-8));x.lineTo(sp.w,4+f*(sp.h-8));x.stroke()});
     x.strokeStyle=C.p;x.lineWidth=3.5;x.beginPath();hist.forEach((v,i)=>{const X=sp.w-(hist.length-1-i)*(sp.w/299),Y=4+(1-v)/2*(sp.h-8);i?x.lineTo(X,Y):x.moveTo(X,Y)});x.stroke()}
@@ -707,20 +779,40 @@ const H={},renders=[];
   H.pair={tick(t,dt){if(auto&&!RM){acc+=dt;if(acc>1.3){acc=0;if(!shift(1)){const k=Math.min(m,n);shift(-k)}}}const k=Math.min(1,dt*6);md+=(m-md)*k;nd+=(n-nd)*k;draw()}};
 })();
 
-/* ===== locked pair (9, 17) ===== */
-function lockedPair(svg,R){plane(svg,R,true);const th=25*DEG,len=R-12;
-  const arc=S('path',{fill:'rgba(220,169,114,.2)',stroke:C.goldD,'stroke-width':4},svg),al=T(svg,0,0,'50°',{class:'svm',fill:C.goldD,'font-size':26,'font-weight':700,'text-anchor':'middle'});
-  const trail=S('path',{fill:'none',stroke:'rgba(196,176,232,.35)','stroke-width':3,'stroke-dasharray':'3 9'},svg);
-  const qa=Arrow(svg,{color:C.lil,w:10,head:30}),ka=Arrow(svg,{color:C.goldD,w:10,head:30});
-  const ql=T(svg,0,0,'q',{fill:C.lil,'font-size':34,'font-weight':800,'text-anchor':'middle',style:`font-family:${ARCH}`}),kl=T(svg,0,0,'k',{fill:C.goldD,'font-size':34,'font-weight':800,'text-anchor':'middle',style:`font-family:${ARCH}`});
-  S('circle',{r:9,fill:'#fff'},svg);
+/* ===== locked pair (end slide) ===== */
+function lockedPair(svg,R,dark){plane(svg,R,dark);const th=25*DEG,len=R-12,cq=dark?C.lil:C.p,ck=dark?C.goldD:C.gold;
+  const arc=S('path',{fill:dark?'rgba(220,169,114,.2)':'rgba(142,100,32,.14)',stroke:ck,'stroke-width':4},svg),al=T(svg,0,0,'50°',{class:'svm',fill:ck,'font-size':26,'font-weight':700,'text-anchor':'middle'});
+  const trail=S('path',{fill:'none',stroke:dark?'rgba(196,176,232,.35)':'rgba(78,9,115,.25)','stroke-width':3,'stroke-dasharray':'3 9'},svg);
+  const qa=Arrow(svg,{color:cq,w:10,head:30}),ka=Arrow(svg,{color:ck,w:10,head:30});
+  const ql=T(svg,0,0,'q',{fill:cq,'font-size':34,'font-weight':800,'text-anchor':'middle',style:`font-family:${ARCH}`}),kl=T(svg,0,0,'k',{fill:ck,'font-size':34,'font-weight':800,'text-anchor':'middle',style:`font-family:${ARCH}`});
+  S('circle',{r:9,fill:dark?'#fff':C.ink},svg);
   return function(p){const a1=10*DEG+p*th,a2=a1+2*th;const[qx,qy]=pt(len,a1),[kx,ky]=pt(len,a2);qa.set(0,0,qx,qy);ka.set(0,0,kx,ky);
     const[a,b]=pt(len+30,a1),[c,d]=pt(len+30,a2);attr(ql,{x:a,y:b+12});attr(kl,{x:c,y:d+12});
     arc.setAttribute('d',arcD(80,a1,a2).replace('M','M0 0 L')+' Z');const[tx,ty]=pt(120,a1+th);attr(al,{x:tx,y:ty+9});
     trail.setAttribute('d',arcD(len+8,Math.max(10*DEG,a1-1.6),a1))}}
-(()=>{const draw=lockedPair($('#s9svg'),220);let p=0;draw(0);
-  H.proof={tick(t,dt){if(!RM)p+=dt*.8;draw(p);$('#s9c').textContent=`m = ${Math.floor(p)} · n = ${Math.floor(p)+2} · gap always 2`}};})();
-(()=>{const draw=lockedPair($('#s17svg'),220);let p=0;draw(0);H.end={tick(t,dt){if(!RM)p+=dt*.6;draw(p)}}})();
+(()=>{const draw=lockedPair($('#s17svg'),220,false);let p=0;draw(0);H.end={tick(t,dt){if(!RM)p+=dt*.6;draw(p)}}})();
+
+/* ===== 9 · proof: the two rules ===== */
+(()=>{const A=$('#s9a'),B=$('#s9b'),L=86;
+  [A,B].forEach(s=>{S('circle',{r:100,fill:'none',stroke:'rgba(196,176,232,.2)','stroke-width':2},s);S('line',{x1:-104,x2:104,y1:0,y2:0,stroke:'rgba(196,176,232,.2)','stroke-width':1.5},s);S('line',{y1:-104,y2:104,x1:0,x2:0,stroke:'rgba(196,176,232,.2)','stroke-width':1.5},s)});
+  const ab=20*DEG,aa=70*DEG,[gx,gy]=pt(L,ab);S('line',{x1:0,y1:0,x2:gx,y2:gy,stroke:'rgba(255,255,255,.4)','stroke-width':4,'stroke-dasharray':'5 7'},A);
+  const aArc=S('path',{fill:'none','stroke-width':7,'stroke-linecap':'round'},A),aAr=Arrow(A,{color:'#fff',w:7,head:22}),aT=T(A,0,78,'',{class:'svm','font-size':24,'font-weight':700,'text-anchor':'middle'});
+  S('line',{x1:0,y1:0,x2:L,y2:0,stroke:'rgba(255,255,255,.4)','stroke-width':4,'stroke-dasharray':'5 7'},B);
+  const bTot=S('path',{fill:'none',stroke:'#fff','stroke-width':3,'stroke-dasharray':'3 6'},B),bG=S('path',{fill:'none',stroke:C.goldD,'stroke-width':7,'stroke-linecap':'round'},B),bL=S('path',{fill:'none',stroke:C.lil,'stroke-width':7,'stroke-linecap':'round'},B),bAr=Arrow(B,{color:'#fff',w:7,head:22}),bT=T(B,0,78,'',{class:'svm','font-size':24,'font-weight':700,'text-anchor':'middle'});
+  S('circle',{r:6,fill:'#fff'},A);S('circle',{r:6,fill:'#fff'},B);
+  const ease=x=>{x=Math.max(0,Math.min(1,x));return x<.5?2*x*x:1-Math.pow(-2*x+2,2)/2};
+  let t0=RM?1.4:0;
+  function draw(){
+    const a=t0%3.4;let cur,fwd;
+    if(a<1){cur=ease(a)*aa;fwd=true}else if(a<1.7){cur=aa;fwd=true}else if(a<2.7){cur=(1-ease(a-1.7))*aa;fwd=false}else{cur=0;fwd=false}
+    const[x,y]=pt(L,ab+cur);aAr.set(0,0,x,y);aArc.setAttribute('d',arcD(50,ab,ab+cur));aArc.setAttribute('stroke',fwd?C.goldD:C.lil);
+    aT.textContent=fwd?'R(a) · +70°':(cur>.5*DEG?'R(a)ᵀ · −70°':'undone ✓');aT.setAttribute('fill',fwd?C.goldD:(cur>.5*DEG?C.lil:C.mint));
+    const b=(RM?2.6:t0)%3.8,A1=30*DEG,A2=75*DEG;let c2;
+    if(b<1)c2=ease(b)*A1;else if(b<1.3)c2=A1;else if(b<2.3)c2=A1+ease(b-1.3)*(A2-A1);else if(b<3.5)c2=A2;else c2=0;
+    const[x2,y2]=pt(L,c2);bAr.set(0,0,x2,y2);bG.setAttribute('d',arcD(42,0,Math.min(c2,A1)));bL.setAttribute('d',c2>A1?arcD(58,A1,c2):'');bTot.setAttribute('d',b>=2.3&&b<3.5?arcD(72,0,A2):'');
+    bT.textContent=b<1.3?'R(a) · 30°':b<2.3?'R(b) · +45°':b<3.5?'R(a+b) · 75°':'';bT.setAttribute('fill',b<1.3?C.goldD:b<2.3?C.lil:'#fff')}
+  draw();H.proof={tick(t,dt){if(!RM)t0+=dt;draw()}};
+})();
 
 /* ===== 10 · dials ===== */
 (()=>{const ths=[1,.1,.01,.001],cols=['#4E0973','#7A53A2','#AD9CD5','#8E6420'],names=['Pair 1 · fastest','Pair 2','Pair 3','Pair 4 · slowest'],turns=ths.map(t=>TAU/t);
@@ -795,28 +887,32 @@ function lockedPair(svg,R){plane(svg,R,true);const th=25*DEG,len=R-12;
 })();
 
 /* ===== 14 · head to head ===== */
-(()=>{const xq=[.9,.35],xk=[.55,.8],om=.45,A=.6,PE=p=>[A*Math.sin(p*om),A*Math.cos(p*om)],dot=(a,b)=>a[0]*b[0]+a[1]*b[1];
+(()=>{const xq=[.9,.35],xk=[.55,.8],om=.45,A=.6,th=.2,PE=p=>[A*Math.sin(p*om),A*Math.cos(p*om)],dot=(a,b)=>a[0]*b[0]+a[1]*b[1];
   const rot=(v,a)=>[v[0]*Math.cos(a)-v[1]*Math.sin(a),v[0]*Math.sin(a)+v[1]*Math.cos(a)];
-  const add=s=>{const m=s,n=s+2,pm=PE(m),pn=PE(n);return{cc:dot(xq,xk),cp:dot(xq,pn),pc:dot(pm,xk),pp:dot(pm,pn)}};
-  const rope=s=>dot(rot(xq,s*om),rot(xk,(s+2)*om));
-  const c=cv('s14c'),rul=$('#s14rul');let s=0;
-  const W=1640,cw=W/64;for(let i=0;i<64;i++){S('rect',{x:20+i*cw+1,y:40,width:cw-2,height:24,rx:3,fill:'#EEE8F6'},rul)}
-  T(rul,20,96,'position 0',{class:'svm',fill:C.mut,'font-size':24});T(rul,20+W,96,'63',{class:'svm',fill:C.mut,'font-size':24,'text-anchor':'end'});
-  const mk=(lab,col)=>{const g=S('g',{},rul);S('rect',{x:-cw/2,y:36,width:cw*1,height:32,rx:5,fill:col},g);T(g,0,26,lab,{'text-anchor':'middle',fill:col,'font-size':26,'font-weight':800,style:`font-family:${ARCH}`});return g};
-  const g1=mk('cat',C.p),g2=mk('sat',C.gold);
-  const data=[];for(let k=0;k<=240;k++){const ss=k/4,a=add(ss);data.push([ss,a.cc+a.cp+a.pc+a.pp,rope(ss)])}
+  const parts=s=>{const pm=PE(s),pn=PE(s+2);return{cc:dot(xq,xk),cp:dot(xq,pn),pc:dot(pm,xk),pp:dot(pm,pn)}};
+  const peS=s=>{const p=parts(s);return p.cc+p.cp+p.pc+p.pp},roS=s=>dot(rot(xq,s*th),rot(xk,(s+2)*th));
+  const data=[];for(let k=0;k<=240;k++){const v=k/4;data.push([v,peS(v),roS(v)])}
   const lo=Math.min(...data.map(d=>Math.min(d[1],d[2])))-.15,hi=Math.max(...data.map(d=>Math.max(d[1],d[2])))+.15;
-  rng('s14s',v=>{s=v;draw()});
-  function draw(){const x=c.x,L=70,R=c.w-10,Tp=10,B=c.h-34,X=v=>L+v/60*(R-L),Y=v=>Tp+(hi-v)/(hi-lo)*(B-Tp);x.clearRect(0,0,c.w,c.h);
-    x.font=`500 24px ${MONO}`;x.textBaseline='middle';x.textAlign='right';[lo+.15,(lo+hi)/2,hi-.15].forEach(v=>{x.strokeStyle='#E6DDF2';x.lineWidth=1.5;x.beginPath();x.moveTo(L,Y(v));x.lineTo(R,Y(v));x.stroke();x.fillStyle=C.mut;x.fillText(v.toFixed(1),L-10,Y(v))});
-    x.textAlign='left';x.fillText('shift 0',L,B+22);x.textAlign='right';x.fillText('60',R,B+22);
-    [[1,C.red],[2,C.p]].forEach(([j,col])=>{x.strokeStyle=col;x.lineWidth=4.5;x.beginPath();data.forEach((d,k)=>k?x.lineTo(X(d[0]),Y(d[j])):x.moveTo(X(d[0]),Y(d[j])));x.stroke()});
-    const a=add(s),av=a.cc+a.cp+a.pc+a.pp,rv=rope(s);x.strokeStyle=C.goldD;x.lineWidth=2.5;x.setLineDash([6,6]);x.beginPath();x.moveTo(X(s),Tp);x.lineTo(X(s),B);x.stroke();x.setLineDash([]);
-    [[av,C.red],[rv,C.p]].forEach(([v,col])=>{x.fillStyle=col;x.beginPath();x.arc(X(s),Y(v),10,0,TAU);x.fill()});
-    g1.setAttribute('transform',`translate(${20+(s+.5)*cw},0)`);g2.setAttribute('transform',`translate(${20+(s+2.5)*cw},0)`);
-    $('#s14sv').textContent=s%1?s.toFixed(2):s;$('#s14a').textContent=fx(av);$('#s14r').textContent=fx(rv);
-    $('#s14t').innerHTML=`word·word   ${fx(a.cc).padStart(5)}  <span class="dim">fixed</span>\nword·pos    ${fx(a.cp).padStart(5)}  <span class="k2">moves</span>\npos·word    ${fx(a.pc).padStart(5)}  <span class="k2">moves</span>\npos·pos     ${fx(a.pp).padStart(5)}  <span class="dim">fixed (gap only)</span>`}
+  $('#s14ra').textContent=`${fx(Math.min(...data.map(d=>d[1])))} to ${fx(Math.max(...data.map(d=>d[1])))}`;$('#s14rr').textContent=`always ${fx(data[0][2])}`;
+  const ca=cv('s14ca'),cr=cv('s14cr'),rul=$('#s14rul'),W=1140,cw=W/64;let s=0,play=false;
+  for(let i=0;i<64;i++)S('rect',{x:60+i*cw+1,y:40,width:cw-2,height:24,rx:3,fill:'#EEE8F6'},rul);
+  T(rul,60,96,'position 0',{class:'svm',fill:C.mut,'font-size':24});T(rul,60+W,96,'63',{class:'svm',fill:C.mut,'font-size':24,'text-anchor':'end'});
+  T(rul,60+W/2,96,'"cat" and "sat" always 2 apart',{class:'svm',fill:C.mut,'font-size':24,'text-anchor':'middle'});
+  const mk=(lab,col,an)=>{const g=S('g',{},rul);S('rect',{x:-cw/2,y:36,width:cw,height:32,rx:5,fill:col},g);T(g,an==='end'?cw/2:-cw/2,26,lab,{'text-anchor':an,fill:col,'font-size':26,'font-weight':800,style:`font-family:${ARCH}`});return g};
+  const g1=mk('cat',C.p,'end'),g2=mk('sat',C.gold,'start');
+  const sl=rng('s14s',v=>{s=v;setPlay(false);draw()});
+  const pb=$('#s14play');function setPlay(v){play=v;pb.textContent=v?'❚❚ Pause':'▶ Slide the phrase'}pb.addEventListener('click',()=>{if(!play&&s>=60)s=0;setPlay(!play)});
+  function chart(o,j,col){const x=o.x,L=58,R=o.w-8,Tp=10,B=o.h-30,X=v=>L+v/60*(R-L),Y=v=>Tp+(hi-v)/(hi-lo)*(B-Tp);x.clearRect(0,0,o.w,o.h);
+    x.font=`500 24px ${MONO}`;x.textBaseline='middle';x.textAlign='right';[0,1,2].filter(v=>v>lo&&v<hi).forEach(v=>{x.strokeStyle='#E6DDF2';x.lineWidth=1.5;x.beginPath();x.moveTo(L,Y(v));x.lineTo(R,Y(v));x.stroke();x.fillStyle=C.mut;x.fillText(v,L-10,Y(v))});
+    x.textAlign='left';x.fillText('shift 0',L,B+18);x.textAlign='right';x.fillText('60',R,B+18);
+    x.strokeStyle=col;x.lineWidth=4.5;x.beginPath();data.forEach((d,k)=>k?x.lineTo(X(d[0]),Y(d[j])):x.moveTo(X(d[0]),Y(d[j])));x.stroke();
+    const v=j===1?peS(s):roS(s);x.strokeStyle=C.goldD;x.lineWidth=2.5;x.setLineDash([6,6]);x.beginPath();x.moveTo(X(s),Tp);x.lineTo(X(s),B);x.stroke();x.setLineDash([]);x.fillStyle=col;x.beginPath();x.arc(X(s),Y(v),10,0,TAU);x.fill()}
+  function draw(){chart(ca,1,C.red);chart(cr,2,C.p);const a=parts(s);
+    g1.setAttribute('transform',`translate(${60+(s+.5)*cw},0)`);g2.setAttribute('transform',`translate(${60+(s+2.5)*cw},0)`);
+    $('#s14sv').textContent=s%1?s.toFixed(1):s;$('#s14a').textContent=fx(peS(s));$('#s14r').textContent=fx(roS(s));
+    $('#s14t').innerHTML=`word · word  ${fx(a.cc).padStart(5)}  <span class="dim">fixed</span>\nword · PE    ${fx(a.cp).padStart(5)}  <span class="k2">moves</span>\nPE · word    ${fx(a.pc).padStart(5)}  <span class="k2">moves</span>\nPE · PE      ${fx(a.pp).padStart(5)}  <span class="dim">fixed</span>`}
   renders.push(draw);draw();
+  H.h2h={tick(t,dt){if(play&&!RM){s=Math.min(60,s+dt*7);sl.set(s);draw();if(s>=60)setPlay(false)}}};
 })();
 
 /* ===== 15 · code ===== */
@@ -856,14 +952,38 @@ scores = q @ k.transpose(-2, -1) / 64 ** 0.5`;
   const[ux,uy]=pt(150,Math.PI*1.15);T(big,ux,uy,'never seen',{class:'svm',fill:C.red2,'font-size':24,'text-anchor':'middle'});
   const ar=Arrow(big,{color:C.p,w:10,head:30});S('circle',{r:10,fill:C.ink},big);
   S('circle',{r:100,fill:'rgba(122,83,162,.2)',stroke:C.mid2,'stroke-width':2},sm);const ar2=Arrow(sm,{color:C.p,w:7,head:20});S('circle',{r:7,fill:C.ink},sm);
-  let p=0,pi=false,play=false;const sl=rng('s16x',v=>{p=v;setPlay(false);draw()});
+  let p=0,play=false;const sl=rng('s16x',v=>{p=v;setPlay(false);draw()});
   const pb=$('#s16play');function setPlay(v){play=v;pb.textContent=v?'❚❚ Stop':'▶ Sweep'}pb.addEventListener('click',()=>{if(!play&&p>=Lt)p=0;setPlay(!play)});
-  const ib=$('#s16pi');ib.addEventListener('click',()=>{pi=!pi;ib.textContent='Interpolation: '+(pi?'on':'off');ib.classList.toggle('on',pi);draw()});
-  function draw(){const pe=pi?p*Ltr/Lt:p,a=pe*th,ok=pe<=Ltr+1;const[x,y]=pt(212,a);ar.set(0,0,x,y);ar.color(ok?C.p:C.red);
-    const[x2,y2]=pt(92,pe*1.0);ar2.set(0,0,x2,y2);
+  function draw(){const a=p*th,ok=p<=Ltr+1;const[x,y]=pt(212,a);ar.set(0,0,x,y);ar.color(ok?C.p:C.red);const[x2,y2]=pt(92,p);ar2.set(0,0,x2,y2);
     $('#s16p').textContent=fmtInt(p);$('#s16a').textContent=Math.round(a/DEG)+'°';const st=$('#s16st');st.textContent=ok?'seen ✓':'unseen ✗';st.className='v '+(ok?'ok':'bad')}
   draw();
   H.limit={tick(t,dt){if(play&&!RM){p=Math.min(Lt,p+dt*2600);sl.set(p);draw();if(p>=Lt)setPlay(false)}}};
+})();
+
+/* ===== 17 · interpolation ===== */
+(()=>{const Ltr=4096,Lt=16384,span=80*DEG,th=span/Ltr,sc=Ltr/Lt;
+  function dial(svg){plane(svg,230,true);S('path',{d:sectorD(225,0,span),fill:'rgba(196,176,232,.3)',stroke:C.lil,'stroke-width':3},svg);
+    S('path',{d:arcD(238,span,TAU-.001),fill:'none',stroke:'#ff9d9d','stroke-width':7,'stroke-dasharray':'5 14','stroke-linecap':'round'},svg);
+    const a=Arrow(svg,{color:'#fff',w:14,head:40});S('circle',{r:14,fill:'#fff'},svg);return a}
+  const dA=dial($('#ipA')),dB=dial($('#ipB'));
+  const r=$('#ipRul'),x0=330,W=1300,X=v=>x0+v/Lt*W,yT=36,yB=104;
+  T(r,0,yT+10,'Real token',{class:'svm',fill:'#fff','font-size':26,'font-weight':700});T(r,0,yB+10,'Dials use',{class:'svm',fill:'#fff','font-size':26,'font-weight':700});
+  S('rect',{x:x0,y:yT,width:W,height:14,rx:7,fill:'rgba(196,176,232,.3)'},r);
+  S('rect',{x:x0,y:yB,width:W,height:14,rx:7,fill:'rgba(255,157,157,.18)'},r);S('rect',{x:x0,y:yB,width:W*sc,height:14,rx:7,fill:C.lil},r);
+  T(r,x0+W,yB+44,'shaded = trained range 0–4,096',{class:'svm',fill:C.lil,'font-size':24,'text-anchor':'end'});
+  [0,4096,8192,12288,16384].forEach(v=>{T(r,X(v),yT-10,v?fmtInt(v):'0',{class:'svm',fill:'rgba(238,232,246,.8)','font-size':24,'text-anchor':v===16384?'end':v?'middle':'start'});
+    S('line',{x1:X(v),y1:yT+14,x2:X(v*sc),y2:yB,stroke:'rgba(196,176,232,.3)','stroke-width':2},r)});
+  const straight=S('line',{y1:yT+14,y2:yB,stroke:'#ff9d9d','stroke-width':3,'stroke-dasharray':'6 6'},r),fan=S('line',{y1:yT+14,y2:yB,stroke:C.goldD,'stroke-width':4},r);
+  const dT=S('circle',{cy:yT+7,r:11,fill:'#fff'},r),dB2=S('circle',{cy:yB+7,r:11,fill:C.goldD},r),lbl=T(r,0,yB+44,'',{class:'svm',fill:C.goldD,'font-size':24,'text-anchor':'middle'});
+  let p=0,tw=0,play=!RM,hold=0;const sl=rng('ipX',v=>{p=v;tw=v;hold=5;draw()});
+  const pb=$('#ipPlay');function setPlay(v){play=v;pb.textContent=v?'❚❚ Pause':'▶ Play'}setPlay(play);pb.addEventListener('click',()=>setPlay(!play));
+  function stat(el,ok){el.textContent=ok?'seen ✓':'unseen ✗';el.style.color=ok?C.mint:'#ff9d9d'}
+  function draw(){const a1=p*th,a2=p*sc*th;let[x,y]=pt(212,a1);dA.set(0,0,x,y);dA.color(p<=Ltr+1?'#fff':'#ff9d9d');[x,y]=pt(212,a2);dB.set(0,0,x,y);
+    stat($('#ipSa'),p<=Ltr+1);stat($('#ipSb'),true);
+    attr(dT,{cx:X(p)});attr(dB2,{cx:X(p*sc)});attr(fan,{x1:X(p),x2:X(p*sc)});attr(straight,{x1:X(p),x2:X(p)});straight.style.display=p>Ltr?'':'none';
+    attr(lbl,{x:Math.min(Math.max(X(p*sc),x0+120),x0+W-120)});lbl.textContent=`${fmtInt(p)} × ¼ = ${fmtInt(p*sc)}`;$('#ipXv').textContent=fmtInt(p)}
+  draw();
+  H.interp={enter(){if(!RM){p=0;tw=0;setPlay(true);draw()}},tick(t,dt){if(play){if(hold>0)hold-=dt;else{tw+=dt*2400;if(tw>Lt+3000)tw=0;p=Math.min(tw,Lt);sl.set(p);draw()}}}};
 })();
 
 /* ========== deck engine ========== */
